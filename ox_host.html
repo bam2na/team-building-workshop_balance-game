@@ -229,7 +229,7 @@ function score(n){return QS.reduce((s,_,i)=>s+(answers[n]&&answers[n][String(i)]
 async function buildTeams(){
   const cnt=Math.min(parseInt(document.getElementById("tn").value)||4,ps.length);
   const teams=Array.from({length:cnt},()=>[]);
-  const sorted=[...ps].map(n=>({n,s:score(n)})).sort((a,b)=>a.s-b.s);
+  const sorted=[...ps].map(n=>({n,s:score(n)})).sort((a,b)=>a.s-b.s||Math.random()-.5);
   let d=1,ti=0;
   sorted.forEach(p=>{teams[ti].push(p.n);ti+=d;if(ti>=cnt||ti<0){d*=-1;ti+=d;}});
   // Firebase에 팀 배정 저장
