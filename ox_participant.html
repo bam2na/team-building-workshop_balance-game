@@ -13,25 +13,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;backgrou
 .btn-g{background:#1D9E75;color:#fff}
 .btn-g:hover{background:#0F6E56}
 .btn-g:disabled{opacity:.35;cursor:not-allowed}
-.tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600}
 input[type=text]{width:100%;padding:14px;font-size:16px;border:1.5px solid #e0e0e0;border-radius:14px;background:#fff;color:#111;outline:none}
 input:focus{border-color:#1D9E75}
 .pbar{height:5px;background:#e8e8e8;border-radius:3px;margin:8px 0 4px}
 .pfill{height:5px;background:#1D9E75;border-radius:3px;transition:width .4s}
 .choice-wrap{display:flex;flex-direction:column;gap:14px;margin:20px 0}
-.choice-btn{
-  width:100%;padding:28px 22px;
-  border:2.5px solid #e0e0e0;
-  border-radius:20px;
-  background:#fff;
-  font-size:18px;font-weight:600;
-  color:#222;
-  cursor:pointer;
-  transition:all .18s;
-  text-align:center;
-  line-height:1.4;
-  border-left-width:6px;
-}
+.choice-btn{width:100%;padding:28px 22px;border:2.5px solid #e0e0e0;border-radius:20px;background:#fff;font-size:18px;font-weight:600;color:#222;cursor:pointer;transition:all .18s;text-align:center;line-height:1.4;border-left-width:6px}
 .choice-btn:active{transform:scale(.97)}
 .choice-btn.a{border-left-color:#E24B4A}
 .choice-btn.b{border-left-color:#378ADD}
@@ -73,10 +60,9 @@ input:focus{border-color:#1D9E75}
 <div id="pp-q" class="pg">
   <div style="margin-bottom:4px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-      <span style="font-size:12px;color:#aaa" id="qnum">1 / 20</span>
-      <span id="qtag"></span>
+      <span style="font-size:12px;color:#aaa" id="qnum">1 / 10</span>
     </div>
-    <div class="pbar"><div class="pfill" id="qbar" style="width:5%"></div></div>
+    <div class="pbar"><div class="pfill" id="qbar" style="width:10%"></div></div>
   </div>
   <div style="font-size:19px;font-weight:700;color:#111;line-height:1.5;margin:16px 0 4px" id="qtext"></div>
   <div class="choice-wrap">
@@ -99,28 +85,17 @@ input:focus{border-color:#1D9E75}
 const DB="https://team-building-workshop-default-rtdb.asia-southeast1.firebasedatabase.app";
 const G="/ox_v1";
 const QS=[
-  {cat:"직장인 공감",q:"칼퇴 vs 야근해도 성과",o:"칼퇴",x:"야근 성과"},
-  {cat:"직장인 공감",q:"회식 고기집 vs 회식 없음",o:"회식 고기집",x:"회식 없음"},
-  {cat:"직장인 공감",q:"사무실 출근 vs 재택근무",o:"사무실 출근",x:"재택근무"},
-  {cat:"직장인 공감",q:"말 많은 팀장 vs 말 없는 팀장",o:"말 많은 팀장",x:"말 없는 팀장"},
-  {cat:"직장인 공감",q:"연봉 500 오르고 업무 2배 vs 현상유지",o:"연봉 500, 업무 2배",x:"현상유지"},
-  {cat:"취향 / 라이프",q:"아는 맛 vs 새로운 맛 도전",o:"아는 맛",x:"새로운 맛"},
-  {cat:"취향 / 라이프",q:"주말에 집에서 쉬기 vs 밖에 나가기",o:"집에서 쉬기",x:"밖에 나가기"},
-  {cat:"취향 / 라이프",q:"혼밥 vs 혼술",o:"혼밥",x:"혼술"},
-  {cat:"취향 / 라이프",q:"카페 vs 공원",o:"카페",x:"공원"},
-  {cat:"취향 / 라이프",q:"3시간 숙면 vs 6시간 뒤척임",o:"3시간 숙면",x:"6시간 뒤척임"},
-  {cat:"극한 선택",q:"기억 잃기 vs 감정 잃기",o:"기억 잃기",x:"감정 잃기"},
-  {cat:"극한 선택",q:"평생 더위 vs 평생 추위",o:"평생 더위",x:"평생 추위"},
-  {cat:"극한 선택",q:"평생 이코노미 vs 평생 무한 환승",o:"평생 이코노미",x:"무한 환승"},
-  {cat:"극한 선택",q:"친한 친구 5명 vs 아는 사람 500명",o:"친한 친구 5명",x:"아는 사람 500명"},
-  {cat:"극한 선택",q:"검색기록 가족 공개 vs 카톡 전체 공개",o:"검색기록 가족",x:"카톡 전체"},
-  {cat:"팀 성향",q:"빠르게 결정하고 수정 vs 느리게 완벽하게",o:"빠르게 결정",x:"느리게 완벽"},
-  {cat:"팀 성향",q:"칭찬 많이 받기 vs 피드백 직접적으로",o:"칭찬 많이",x:"직접 피드백"},
-  {cat:"팀 성향",q:"혼자 집중 vs 같이 떠들며 작업",o:"혼자 집중",x:"같이 떠들며"},
-  {cat:"팀 성향",q:"아이디어 많은 팀원 vs 실행력 강한 팀원",o:"아이디어 팀원",x:"실행력 팀원"},
-  {cat:"팀 성향",q:"실패해도 큰 도전 vs 안정적인 작은 성공",o:"큰 도전",x:"안정적 성공"},
+  {q:"붕어빵",o:"팥",x:"슈크림"},
+  {q:"메뉴 선택 부담없는 혼밥!",o:"아는 맛",x:"새로운 맛"},
+  {q:"유명한 맛집, 웨이팅이 3시간이라면?",o:"그래도 기다려서 먹기",x:"웨이팅 없는 바로 옆 가게 (같은 메뉴)"},
+  {q:"갑자기 생긴 초능력 1",o:"잠 안자도 멀쩡",x:"아무거나 먹어도 살 안 찜"},
+  {q:"갑자기 생긴 초능력 2",o:"순간이동",x:"타임머신"},
+  {q:"이런 환경에서 일해야 한다면?",o:"나 빼고 모두가 브레인인 팀",x:"내가 유일한 희망인 팀"},
+  {q:"내 옆자리에 둘 중 하나만 앉혀야 한다면?",o:"맨날 회사 브이로그 찍는 팀원",x:"말 걸어도 단답만 하는 팀원"},
+  {q:"일주일 스케줄이 걸린 선택",o:"일주일 내내 야근하기",x:"전직원 앞에서 장기자랑하고 일주일 쉬기"},
+  {q:"?",o:"모르는게 상책",x:"모르는 개 산책"},
+  {q:"밸런스 게임은 시간 낭비다",o:"O",x:"X"},
 ];
-const CC={"직장인 공감":["#FFF8EC","#9a6200"],"취향 / 라이프":["#EDFAF4","#0F6E56"],"극한 선택":["#FCEBEB","#A32D2D"],"팀 성향":["#EBF5FF","#0C447C"]};
 
 async function api(path,method,body){
   try{
@@ -170,10 +145,8 @@ async function poll(){
 
 function renderQ(qi){
   const q=QS[qi];
-  const[bg,tc]=CC[q.cat];
   document.getElementById("qnum").textContent=(qi+1)+" / "+QS.length;
   document.getElementById("qbar").style.width=Math.round((qi+1)/QS.length*100)+"%";
-  document.getElementById("qtag").innerHTML=`<span class="tag" style="background:${bg};color:${tc}">${q.cat}</span>`;
   document.getElementById("qtext").textContent=q.q;
   document.getElementById("lo").textContent=q.o;
   document.getElementById("lx").textContent=q.x;
