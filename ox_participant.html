@@ -191,8 +191,6 @@ function showVoted(ans){
 }
 async function vote(ans){
   if(curQ<0)return;
-  const ex=await api(`/answers/${myName}/${curQ}`);
-  if(ex)return;
   showVoted(ans);
   await api(`/answers/${myName}/${curQ}`,"PUT",ans);
 }
