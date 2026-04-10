@@ -273,7 +273,6 @@ async function buildTeams(){
           <div style="display:flex;flex-wrap:wrap;gap:4px">${xNames.map(n=>nameChip(n,"#FFF0F0","#c0392b")).join("")||'<span style="font-size:12px;color:#bbb">없음</span>'}</div>
         </div>
       </div>
-      <div style="margin-top:8px;height:5px;background:#e8e8e8;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:5px;background:#378ADD;border-radius:3px"></div></div>
     </div>`;
   }).join("");
   document.getElementById("dist").innerHTML=`<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.07)"><div style="font-size:14px;font-weight:700;color:#111;margin-bottom:4px">선택 분포</div><div style="font-size:12px;color:#aaa;margin-bottom:12px">각 문항별 누가 뭘 선택했는지 확인하세요</div>${rows}</div>`;
