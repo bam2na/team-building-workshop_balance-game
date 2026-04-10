@@ -74,10 +74,15 @@ input:focus{border-color:#1D9E75}
 </div>
 
 <div id="pp-done" class="pg">
-  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center">
     <div style="font-size:56px">🎉</div>
     <div style="font-size:20px;font-weight:700;color:#111">게임 완료!</div>
-    <div style="font-size:14px;color:#888">진행자 화면에서 팀 배정 결과를 확인하세요</div>
+    <div id="team-wait" style="font-size:14px;color:#aaa"><span class="spin"></span>팀 배정 대기 중...</div>
+    <div id="team-result" style="display:none;width:100%">
+      <div style="font-size:13px;color:#888;margin-bottom:10px">배정된 팀</div>
+      <div id="team-badge" style="display:inline-flex;align-items:center;gap:12px;padding:18px 32px;border-radius:20px;font-size:24px;font-weight:700"></div>
+      <div id="team-members" style="margin-top:16px;font-size:13px;color:#888"></div>
+    </div>
   </div>
 </div>
 
@@ -104,7 +109,7 @@ async function api(path,method,body){
   }catch{return null;}
 }
 
-let myName="",curQ=-1,timer=null;
+let myName="",curQ=-1,timer=null,teamPollTimer=null;
 
 const ni=document.getElementById("ni");
 ni.addEventListener("input",()=>document.getElementById("jb").disabled=!ni.value.trim());
@@ -132,7 +137,12 @@ async function join(){
 async function poll(){
   const meta=await api("/meta");
   if(!meta)return;
-  if(meta.state==="done"){clearInterval(timer);show("pp-done");return;}
+  if(meta.state==="done"){
+    clearInterval(timer);
+    show("pp-done");
+    teamPollTimer=setInterval(pollTeam,2000);pollTeam();
+    return;
+  }
   if(meta.state!=="playing")return;
   if(meta.currentQ!==curQ){
     curQ=meta.currentQ;
@@ -166,6 +176,24 @@ async function vote(ans){
   if(curQ<0)return;
   showVoted(ans);
   await api(`/answers/${myName}/${curQ}`,"PUT",ans);
+}
+
+async function pollTeam(){
+  const data=await api("/team_assignments");
+  if(!data||!data[myName])return;
+  clearInterval(teamPollTimer);
+  const t=data[myName];
+  // 같은 팀원 목록
+  const teammates=Object.entries(data).filter(([n,v])=>v.team===t.team&&n!==myName).map(([n])=>n);
+  document.getElementById("team-wait").style.display="none";
+  document.getElementById("team-result").style.display="block";
+  const badge=document.getElementById("team-badge");
+  badge.style.background=t.bg;
+  badge.style.color=t.txt;
+  badge.innerHTML=`<span style="width:14px;height:14px;border-radius:50%;background:${t.color};display:inline-block;flex-shrink:0"></span>${t.team}`;
+  document.getElementById("team-members").innerHTML=teammates.length
+    ?`같은 팀: ${teammates.map(n=>`<strong style="color:#333">${n}</strong>`).join(", ")}`
+    :"";
 }
 </script>
 </body>
