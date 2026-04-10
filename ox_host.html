@@ -226,12 +226,16 @@ async function hNext(){
 
 function score(n){return QS.reduce((s,_,i)=>s+(answers[n]&&answers[n][String(i)]==="x"?1:0)*(i+1),0);}
 
-function buildTeams(){
+async function buildTeams(){
   const cnt=Math.min(parseInt(document.getElementById("tn").value)||4,ps.length);
   const teams=Array.from({length:cnt},()=>[]);
   const sorted=[...ps].map(n=>({n,s:score(n)})).sort((a,b)=>a.s-b.s);
   let d=1,ti=0;
   sorted.forEach(p=>{teams[ti].push(p.n);ti+=d;if(ti>=cnt||ti<0){d*=-1;ti+=d;}});
+  // Firebase에 팀 배정 저장
+  const teamMap={};
+  teams.forEach((ms,i)=>ms.forEach(m=>{teamMap[m]={team:TN[i],color:TC[i],bg:TBG[i],txt:TTX[i]};}));
+  await api("/team_assignments","PUT",teamMap);
 
   document.getElementById("teams").innerHTML=teams.map((ms,i)=>`
     <div style="background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07)">
@@ -249,17 +253,30 @@ function buildTeams(){
     </div>`).join("");
 
   const rows=QS.map((q,i)=>{
-    const oc=ps.filter(n=>answers[n]&&answers[n][String(i)]==="o").length;
-    const xc=ps.length-oc;
-    const pct=ps.length?Math.round(oc/ps.length*100):50;
-    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0f0f0">
-      <span style="flex:1;font-size:12px;color:#666;min-width:0">${q.o} vs ${q.x}</span>
-      <span style="font-size:11px;font-weight:600;color:#085041;background:#E1F5EE;padding:1px 6px;border-radius:8px;min-width:22px;text-align:center">${oc}</span>
-      <div style="width:60px;height:5px;background:#e8e8e8;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:5px;background:#1D9E75;border-radius:3px"></div></div>
-      <span style="font-size:11px;font-weight:600;color:#791F1F;background:#FCEBEB;padding:1px 6px;border-radius:8px;min-width:22px;text-align:center">${xc}</span>
+    const oNames=ps.filter(n=>answers[n]&&answers[n][String(i)]==="o");
+    const xNames=ps.filter(n=>answers[n]&&answers[n][String(i)]==="x");
+    const pct=ps.length?Math.round(oNames.length/ps.length*100):50;
+    const nameChip=(n,bg,tc)=>`<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:${bg};border-radius:12px;font-size:12px;font-weight:500;color:${tc}"><span style="width:16px;height:16px;border-radius:50%;background:${tc}22;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:${tc}">${n.charAt(0)}</span>${n}</span>`;
+    return `<div style="padding:10px 0;border-bottom:1px solid #f0f0f0">
+      <div style="font-size:13px;font-weight:600;color:#222;margin-bottom:8px">${q.q}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:600;color:#1a6cb0;background:#EBF5FF;padding:2px 8px;border-radius:8px">${q.o} ${oNames.length}명</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">${oNames.map(n=>nameChip(n,"#EBF5FF","#1a6cb0")).join("")||'<span style="font-size:12px;color:#bbb">없음</span>'}</div>
+        </div>
+        <div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:600;color:#c0392b;background:#FFF0F0;padding:2px 8px;border-radius:8px">${q.x} ${xNames.length}명</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">${xNames.map(n=>nameChip(n,"#FFF0F0","#c0392b")).join("")||'<span style="font-size:12px;color:#bbb">없음</span>'}</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;height:5px;background:#e8e8e8;border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:5px;background:#378ADD;border-radius:3px"></div></div>
     </div>`;
   }).join("");
-  document.getElementById("dist").innerHTML=`<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.07)"><div style="font-size:14px;font-weight:700;color:#111;margin-bottom:10px">O / X 분포</div>${rows}</div>`;
+  document.getElementById("dist").innerHTML=`<div style="background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.07)"><div style="font-size:14px;font-weight:700;color:#111;margin-bottom:4px">선택 분포</div><div style="font-size:12px;color:#aaa;margin-bottom:12px">각 문항별 누가 뭘 선택했는지 확인하세요</div>${rows}</div>`;
 }
 
 async function hReset(){
